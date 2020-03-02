@@ -94,3 +94,21 @@ def compute_accuracy(y_test, y_hat):
     accuracy = 1 - ((1 / y_test.shape[0]) * np.sum(np.abs(y_test - y_hat)))
     return accuracy
 
+
+def normalize_all_features(X):
+
+    mu = np.sum(X, axis=0) / X.shape[0]  # means of each column
+
+    shifted_x = np.subtract(X, mu)  # shift location of x
+    covariance = np.dot(np.transpose(shifted_x), shifted_x)
+    variance_vector = np.diag(covariance)  # variance of each column
+    variance_vector = np.where(variance_vector == 0, 1, variance_vector)  # for columns with 0 variance
+
+    scaled_x = np.dot(shifted_x, np.diag(np.reciprocal(variance_vector.astype(float))))
+
+    return scaled_x
+
+#
+# a = np.arange(0, 6).reshape(3,2)
+# print(a)
+# print(normalize_all_features(a))
