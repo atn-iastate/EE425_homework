@@ -67,7 +67,7 @@ class LogisticModel:
 
     @staticmethod
     def logistic_estimate(x, y, max_iter):
-        learn_rate = (1e-2) / y.shape[0]
+        learn_rate = (1e-3) / y.shape[0]
         theta_hat = np.ones(x.shape[1])
 
         for t in range(max_iter):

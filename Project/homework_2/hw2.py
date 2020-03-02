@@ -2,6 +2,7 @@ from homework_2.models import GDAModel, LogisticModel
 import gzip
 import numpy as np
 
+
 class MnistFileInfo:
 
     def __init__(self, mb=0, no_of_images=0, height=0, width=0, file_type="images"):
