@@ -1,7 +1,8 @@
 from homework_2.hw2 import MnistFileInfo
 from homework_2.hw2 import to_numpy_dataframe
 from homework_2.hw2 import remove_middle_rows
-from homework_2.hw2 import remove_zero_columns
+from .utils import check_kkt_convergence
+from .utils import update_alpha
 import numpy as np
 import gzip
 
@@ -41,6 +42,35 @@ def main():
         # remove pictures where labels are not 0 or 9
         train_images, train_labels = remove_middle_rows(train_images, train_labels)
         test_images, test_labels = remove_middle_rows(test_images, test_labels)
+
+        # change train labels to 1 and -1
+        train_labels[np.where(train_labels == 0)[0]] = 1
+        train_labels[np.where(train_labels == 9)[0]] = -1
+
+        # start training
+        max_iter = 1000
+        C = 0.01
+        tol = 0.01
+        alpha = np.zeros_like(train_labels)
+
+        for i in range(max_iter):
+            # compute w and b
+            w =
+            b =
+
+            check = check_kkt_convergence(train_images, train_labels, alpha, w, b, C, tol)
+            if check[0] is True:
+                break
+            else:
+                p = check[1]
+                q =
+                alpha = update_alpha(train_images, train_labels, alpha, C, (p, q))
+
+
+
+
+
+
 
 
 if __name__ == '__main__':
