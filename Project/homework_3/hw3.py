@@ -1,8 +1,7 @@
 from homework_2.hw2 import MnistFileInfo
 from homework_2.hw2 import to_numpy_dataframe
 from homework_2.hw2 import remove_middle_rows
-from .utils import check_kkt_convergence
-from .utils import update_alpha
+from homework_3.package.utils import update_alpha, compute_w, compute_intercept, find_second_index, get_unbound_index, compute_accuracy
 import numpy as np
 import gzip
 
@@ -44,33 +43,49 @@ def main():
         test_images, test_labels = remove_middle_rows(test_images, test_labels)
 
         # change train labels to 1 and -1
-        train_labels[np.where(train_labels == 0)[0]] = 1
-        train_labels[np.where(train_labels == 9)[0]] = -1
+        train_labels = np.where(train_labels == 0, 1, -1)
 
         # start training
-        max_iter = 1000
-        C = 0.01
-        tol = 0.01
+        max_iter = 100
+        C = 0.1
+        tol = 0.001
         alpha = np.zeros_like(train_labels)
+
+        # testing
+        # w = compute_w(alpha, train_images, train_labels)
+        # b = compute_intercept(w, train_images, train_labels)
+        #
+        # unbound_index = get_unbound_index(train_images, train_labels, w, alpha, b, C, tol)
+        # index = (100, 200)
+        # x_reduced = np.delete(train_images, list(index), axis=0)
+        # p = np.random.choice(unbound_index)
+        # q = find_second_index(train_images, train_labels, w, b, p, unbound_index)
+        #
+        # print(x_reduced.shape)
+        # print(q)
 
         for i in range(max_iter):
             # compute w and b
-            w =
-            b =
+            w = compute_w(alpha, train_images, train_labels)
+            b = compute_intercept(w, train_images, train_labels)
 
-            check = check_kkt_convergence(train_images, train_labels, alpha, w, b, C, tol)
-            if check[0] is True:
+            unbound_index = get_unbound_index(train_images, train_labels, w, alpha, b, C, tol)
+            if len(unbound_index) == 0:
                 break
             else:
-                p = check[1]
-                q =
+                p = np.random.choice(unbound_index)
+                q = find_second_index(train_images, train_labels, w, b, p, unbound_index)
+
                 alpha = update_alpha(train_images, train_labels, alpha, C, (p, q))
 
-
-
-
-
-
+        # predict test data
+        z = np.dot(test_images, w) + b * np.ones_like(test_labels)
+        y_predict = np.where(z >= 0, 0, 9)
+        accuracy = compute_accuracy(test_labels, y_predict)
+        
+        print("Accuracy of the SVM: %2f" % accuracy)
+        print(w[0:10])
+        print(unbound_index)
 
 
 if __name__ == '__main__':
