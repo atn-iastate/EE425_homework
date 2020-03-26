@@ -23,9 +23,9 @@ def choose_first_r_columns(x, y, x_test, y_test):
     :return: r is the number of optimal columns of X to be included in the model (0:r)
     """
     if x.shape[0] != y.shape[0]:
-        raise Exception("x and y must have the same dimension")
+        raise Exception("x and y must have the same number of rows")
     elif x_test.shape[0] != y_test.shape[0]:
-        raise Exception("x_test and y_test must have the same dimension")
+        raise Exception("x_test and y_test must have the same number of rows")
 
     test_mse = []
 
@@ -65,7 +65,7 @@ def choose_rank_r(x, y, x_test, y_test):
 
     test_mse = []
 
-    for i in range(1, 50):
+    for i in range(1, x.shape[1]):
         v = np.transpose(vh_full)[:, 0:i]
         B = x @ v
 
