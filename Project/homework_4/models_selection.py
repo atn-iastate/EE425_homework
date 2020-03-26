@@ -1,5 +1,4 @@
 import numpy as np
-import matplotlib.pyplot as plt
 
 
 def compute_test_mse(y_hat, y_test):
@@ -34,9 +33,13 @@ def choose_first_r_columns(x, y, x_test, y_test):
     x_test = np.concatenate((np.ones(x_test.shape[0]).reshape(x_test.shape[0], 1), x_test), axis=1)
 
     for i in range(x.shape[1]):
-        estimate_parameters = np.linalg.inv(np.transpose(x[:, 0:i]) @ x[:, 0:i]) @ np.transpose(x[:, 0:i]) @ y
-        y_hat = x_test[:, 0:i] @ estimate_parameters
-        test_mse.append(compute_test_mse(y_hat, y_test))
+        # estimate_parameters = np.linalg.inv(np.transpose(x[:, 0:i]) @ x[:, 0:i]) @ np.transpose(x[:, 0:i]) @ y
+        try:
+            estimate_parameters = np.linalg.inv(np.transpose(x[:, 0:i]) @ x[:, 0:i]) @ np.transpose(x[:, 0:i]) @ y
+            y_hat = x_test[:, 0:i] @ estimate_parameters
+            test_mse.append(compute_test_mse(y_hat, y_test))
+        except np.linalg.LinAlgError:
+            test_mse.append(max(test_mse) + 10e10)
 
     r = np.argmin(test_mse) + 1
     plot_content = (np.arange(0, len(test_mse), 1), np.log(test_mse))
@@ -71,7 +74,10 @@ def choose_rank_r(x, y, x_test, y_test):
 
         B = np.concatenate((np.ones(B.shape[0]).reshape(B.shape[0], 1), B), axis=1)  # adding bias term
 
-        estimate_parameters = np.linalg.inv(np.transpose(B) @ B) @ np.transpose(B) @ y
+        try:
+            estimate_parameters = np.linalg.inv(np.transpose(B) @ B) @ np.transpose(B) @ y
+        except np.linalg.LinAlgError:
+            raise Exception("%i" % B.shape[0])
 
         y_hat = x_test @ v @ estimate_parameters[0: i] + estimate_parameters[i]
 

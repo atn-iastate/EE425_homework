@@ -1,8 +1,8 @@
 import numpy as np
 
-x = np.arange(0, 9, 1).reshape(3, 3)
 
-x = np.concatenate((np.ones(x.shape[0]).reshape(x.shape[0], 1), x), axis=1)
+n = 100
 
-print(x.shape)
-print(x)
+evals = np.concatenate((100 * np.random.randn(round(n / 8)), np.random.randn(n - round(n / 8)))) ** 2
+
+print(evals)

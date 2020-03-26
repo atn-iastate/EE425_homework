@@ -5,6 +5,15 @@ from homework_4.models_selection import choose_first_r_columns, choose_rank_r
 from pandas import read_csv
 
 
+def remove_zero_columns(numpy_array):
+    zeros_index = []
+    for i in range(numpy_array.shape[1]):
+        if np.sum(numpy_array[:, i]) == 0:
+            zeros_index.append(i)
+
+    return np.delete(numpy_array, zeros_index, 1), zeros_index
+
+
 def main():
 
     # initial setup
@@ -47,11 +56,21 @@ def main():
 
     test_data = read_csv("{}{}".format(url, data['test_data']), delimiter=",").to_numpy()
 
+    train_data, removed_cols = remove_zero_columns(train_data)
+    test_data = np.delete(test_data, removed_cols, 1)
+
+    # print(train_data.shape)
+    # print(test_data.shape)
+    #
+    # b = np.linalg.inv(np.transpose(train_data[:, 0:121]) @ train_data[:, 0:121])
+    # print(b)
+
     print("blogData:")
 
+    n = train_data.shape[1] - 1
     # model_selection
-    r3, plot3 = choose_first_r_columns(train_data[:, 0:280], train_data[:, 280], test_data[:, 0:280], test_data[:, 280])
-    r4, plot4 = choose_rank_r(train_data[:, 0:280], train_data[:, 280], test_data[:, 0:280], test_data[:, 280])
+    r3, plot3 = choose_first_r_columns(train_data[:, 0:n], train_data[:, n], test_data[:, 0:n], test_data[:, n])
+    r4, plot4 = choose_rank_r(train_data[:, 0:n], train_data[:, n], test_data[:, 0:n], test_data[:, n])
 
     # showing results for simulation
     plot, another_mse_plots = subplots(2, 1)
@@ -72,3 +91,5 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
