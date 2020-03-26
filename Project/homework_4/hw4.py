@@ -18,6 +18,7 @@ def main():
     r1, plot1 = choose_first_r_columns(x_tot[0:50, :], y[0:50], x_test=x_tot[50:80], y_test=y[50:80])
     r2, plot2 = choose_rank_r(x_tot[0:50, :], y[0:50], x_test=x_tot[50:80], y_test=y[50:80])
 
+    # showing results for simulation
     plot, mse_plots = subplots(2, 1)
 
     mse_plots[0].plot(plot1[0], plot1[1], linestyle='--', marker='o')
@@ -26,13 +27,47 @@ def main():
     mse_plots[1].set_title("MSE per number of Principal Components")
     ylabel('Log( MSE )')
 
+    print("Simulation:")
     print("The optimal number of features to be included is %i first features" % r1)
     print("The optimal number of principal components to be included is %i components" % r2)
+    print("")
+
+    # blogData
+    data = {
+        "train_data_1": "blogData_test-2012.02.01.00_00.csv",
+        "train_data_2":  "blogData_test-2012.02.02.00_00.csv",
+        "test_data": "blogData_test-2012.02.03.00_00.csv"
+    }
+
+    url = "https://raw.githubusercontent.com/atn-iastate/EE425_homework/master/Project/homework_4/data/"
+
+    train_data_1 = read_csv("{}{}".format(url, data['train_data_1']), delimiter=",").to_numpy()
+    train_data_2 = read_csv("{}{}".format(url, data['train_data_2']), delimiter=",").to_numpy()
+    train_data = np.concatenate((train_data_1, train_data_2), axis=0)
+
+    test_data = read_csv("{}{}".format(url, data['test_data']), delimiter=",").to_numpy()
+
+    print("blogData:")
+
+    # model_selection
+    r3, plot3 = choose_first_r_columns(train_data[:, 0:280], train_data[:, 280], test_data[:, 0:280], test_data[:, 280])
+    r4, plot4 = choose_rank_r(train_data[:, 0:280], train_data[:, 280], test_data[:, 0:280], test_data[:, 280])
+
+    # showing results for simulation
+    plot, another_mse_plots = subplots(2, 1)
+
+    another_mse_plots[0].plot(plot3[0], plot3[1], linestyle='--', marker='o')
+    another_mse_plots[0].set_title("MSE per number of first columns")
+    another_mse_plots[1].plot(plot4[0], plot4[1], linestyle='--', marker='o')
+    another_mse_plots[1].set_title("MSE per number of Principal Components")
+    ylabel('Log( MSE )')
+
+    print("blogData:")
+    print("The optimal number of features to be included is %i first features" % r3)
+    print("The optimal number of principal components to be included is %i components" % r4)
+    print("")
 
     show()
-
-    # real data
-    
 
 
 if __name__ == '__main__':
